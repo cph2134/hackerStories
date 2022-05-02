@@ -1,5 +1,19 @@
 import * as React from "react";
 
+//example of a custom hook
+//this follows several conventions of built-in hooks. 1) the naming convention, 2) returned values are return as an array.
+//a goal of a custom hook should be reusability.
+const useStorageState = (key, initialState) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) || initialState
+  );
+
+  React.useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [value, key]);
+  return [value, setValue];
+};
+
 const App = () => {
   const stories = [
     {
@@ -21,13 +35,7 @@ const App = () => {
   ];
   console.log("App renders");
 
-  const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem("search") || "React"
-  );
-
-  React.useEffect(() => {
-    localStorage.setItem("search", searchTerm);
-  }, [searchTerm]);
+  const [searchTerm, setSearchTerm] = useStorageState("search", "React");
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
