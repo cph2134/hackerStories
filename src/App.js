@@ -21,11 +21,18 @@ const App = () => {
   ];
   console.log("App renders");
 
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchTerm, setSearchTerm] = React.useState(
+    localStorage.getItem("search") || "React"
+  );
+
+  React.useEffect(() => {
+    localStorage.setItem("search", searchTerm);
+  }, [searchTerm]);
 
   const handleSearch = (e) => {
-    console.log(e.target.value);
+    setSearchTerm(e.target.value);
   };
+
   const searchTermToRegex = new RegExp(searchTerm, "i");
   const searchedStories = stories.filter((item) =>
     item.title.match(searchTermToRegex)
@@ -48,7 +55,6 @@ const Search = ({ onSearch, searchTerm, setSearchTerm }) => {
   console.log("Search renders");
 
   const handleChange = (e) => {
-    setSearchTerm(e.target.value);
     onSearch(e);
   };
 
@@ -78,23 +84,23 @@ const List = ({ list }) => {
         {list.length === 0 ? (
           <p>No stories found!</p>
         ) : (
-          list.map((item) => <Item details={item} key={item.objectID} />)
+          list.map(({ objectID, ...item }) => <Item key={objectID} {...item} />)
         )}
       </ul>
     </div>
   );
 };
 
-const Item = ({ details }) => {
+const Item = ({ title, url, author, num_comments, points }) => {
   console.log("item renders");
   return (
     <li>
       <span>
-        <a href={details.url}>{details.title}</a>
+        <a href={url}>{title}</a>
       </span>
-      <span> {details.author}</span>
-      <span> {details.num_comments}</span>
-      <span> {details.points}</span>
+      <span> {author}</span>
+      <span> {num_comments}</span>
+      <span> {points}</span>
     </li>
   );
 };
