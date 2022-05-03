@@ -48,10 +48,11 @@ const App = () => {
   return (
     <div>
       <h1>My Hacker Stories</h1>
-      <Search
-        onSearch={handleSearch}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+      <InputWithLabel
+        onInputChange={handleSearch}
+        value={searchTerm}
+        label="Search"
+        id="search"
       />
       <hr />
       <List list={searchedStories} />
@@ -59,34 +60,29 @@ const App = () => {
   );
 };
 
-const Search = ({ onSearch, searchTerm, setSearchTerm }) => {
+const InputWithLabel = ({ onInputChange, id, label, value, type = "text" }) => {
   console.log("Search renders");
 
-  const handleChange = (e) => {
-    onSearch(e);
-  };
+  // const handleChange = (e) => {
+  //   onSearch(e);
+  // };
 
   return (
-    <div>
-      <label htmlFor="search" />
-      Search:
-      <input
-        id="search"
-        type="text"
-        value={searchTerm}
-        onChange={handleChange}
-      />
-      <p>
-        Searching for <strong>{searchTerm}</strong>
-      </p>
-    </div>
+    <>
+      <label htmlFor={id} />
+      {label}:
+      <input id={id} type={type} value={value} onChange={onInputChange} />
+      {/* <p>
+        Searching for <strong>{value}</strong>
+      </p> */}
+    </>
   );
 };
 
 const List = ({ list }) => {
   console.log("list renders");
   return (
-    <div>
+    <>
       <h2>Topics</h2>
       <ul>
         {list.length === 0 ? (
@@ -95,7 +91,7 @@ const List = ({ list }) => {
           list.map(({ objectID, ...item }) => <Item key={objectID} {...item} />)
         )}
       </ul>
-    </div>
+    </>
   );
 };
 
