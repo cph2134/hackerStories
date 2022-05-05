@@ -33,16 +33,19 @@ const App = () => {
       objectID: 1,
     },
   ];
-  console.log("App renders");
-
-  const [searchTerm, setSearchTerm] = useStorageState("search", "React");
+  const [storyList, setStoryList] = React.useState(stories);
+  const [searchTerm, setSearchTerm] = useStorageState("search", "");
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
+  const handleRemoveStory = (id) => {
+    setStoryList(storyList.filter((story) => story.objectID !== id));
+  };
+
   const searchTermToRegex = new RegExp(searchTerm, "i");
-  const searchedStories = stories.filter((item) =>
+  const searchedStories = storyList.filter((item) =>
     item.title.match(searchTermToRegex)
   );
   return (
@@ -58,7 +61,7 @@ const App = () => {
         <strong>Search:</strong>
       </InputWithLabel>
       <hr />
-      <List list={searchedStories} />
+      <List list={searchedStories} onRemoveItem={handleRemoveStory} />
     </div>
   );
 };
@@ -94,7 +97,7 @@ const InputWithLabel = ({
   );
 };
 
-const List = ({ list }) => {
+const List = ({ list, onRemoveItem }) => {
   console.log("list renders");
   return (
     <>
@@ -103,14 +106,29 @@ const List = ({ list }) => {
         {list.length === 0 ? (
           <p>No stories found!</p>
         ) : (
-          list.map(({ objectID, ...item }) => <Item key={objectID} {...item} />)
+          list.map(({ objectID, ...item }) => (
+            <Item
+              key={objectID}
+              id={objectID}
+              {...item}
+              onRemoveItem={onRemoveItem}
+            />
+          ))
         )}
       </ul>
     </>
   );
 };
 
-const Item = ({ title, url, author, num_comments, points }) => {
+const Item = ({
+  id,
+  title,
+  url,
+  author,
+  num_comments,
+  points,
+  onRemoveItem,
+}) => {
   console.log("item renders");
   return (
     <li>
@@ -120,6 +138,7 @@ const Item = ({ title, url, author, num_comments, points }) => {
       <span> {author}</span>
       <span> {num_comments}</span>
       <span> {points}</span>
+      <button onClick={() => onRemoveItem(id)}>Delete Story</button>
     </li>
   );
 };
